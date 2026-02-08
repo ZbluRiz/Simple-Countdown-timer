@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{%  block content %}
+    <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md mx-auto">
+        <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">
+            Result
+        </h2>
+        <div class="space-y-4 mb-8">
+            <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <p class="text-sm text-gray-600 mb-1 text-center">
+                    Countdown
+                </p>
+                <p class="text-xl font-semibold text-gray-800 text-center" id="timer">
+                    {{ duration|json_script:"duration-data" }}
+                </p>
+            </div>
+        </div>
+        <form action="{% url 'reset' %}" method="post">
+            {% csrf_token %}
+            <button
+                type="submit"
+                class="mt-6 px-4 py-2 bg-gray-400 rounded-lg"
+            >
+                ⬅ Kembali
+            </button>
+        </form>
+    </div>
+        {{ interval|json_script:"interval-data" }}
+        {{ msg|json_script:"msg-data" }}
+    <script>
+
+        let duration = JSON.parse(
+            document.getElementById("duration-data").textContent
+        );
+        const interval =
+            JSON.parse(document.getElementById("interval-data").textContent) * 1000;
+        const message = JSON.parse(
+            document.getElementById("msg-data").textContent
+        );
+
+        const timerEl = document.getElementById("timer");
+
+        const countdown = setInterval(() => {
+            if (duration <= 0) {
+            clearInterval(countdown);
+            alert(message);
+            return;
+            }
+
+            timerEl.innerText = duration;
+            duration--;
+        }, interval);
+    </script>
+{% endblock %}
